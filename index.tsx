@@ -111,8 +111,8 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ className = 'h-5 w-5' }
   );
 };
 
-// --- Services (namespaced to avoid conflicts) ---
-namespace storageService {
+// --- Services ---
+const storageService = (() => {
   const POSTS_KEY = 'wanderlog_posts';
 
   const getInitialPosts = (): Post[] => {
@@ -143,7 +143,7 @@ namespace storageService {
     ];
   };
 
-  export const getPosts = (): Post[] => {
+  const getPosts = (): Post[] => {
     try {
       const postsJson = localStorage.getItem(POSTS_KEY);
       if (!postsJson) {
@@ -158,7 +158,7 @@ namespace storageService {
     }
   };
 
-  export const savePosts = (posts: Post[]): void => {
+  const savePosts = (posts: Post[]): void => {
     try {
       const postsJson = JSON.stringify(posts);
       localStorage.setItem(POSTS_KEY, postsJson);
@@ -166,9 +166,11 @@ namespace storageService {
       console.error("Failed to save posts to localStorage", error);
     }
   };
-}
 
-namespace geminiService {
+  return { getPosts, savePosts };
+})();
+
+const geminiService = (() => {
     let ai: GoogleGenAI | null = null;
 
     function getAiClient(): GoogleGenAI | null {
@@ -185,7 +187,7 @@ namespace geminiService {
         }
     }
 
-    export const generatePostIdea = async (topic: string): Promise<string> => {
+    const generatePostIdea = async (topic: string): Promise<string> => {
       const aiClient = getAiClient();
       if (!aiClient) return "API Key not configured. Please set up your API_KEY.";
       
@@ -201,7 +203,7 @@ namespace geminiService {
       }
     };
 
-    export const generatePostImage = async (prompt: string): Promise<string> => {
+    const generatePostImage = async (prompt: string): Promise<string> => {
       const aiClient = getAiClient();
       const fallbackImageUrl = `https://picsum.photos/seed/${prompt.replace(/\s/g, '')}/1200/675`;
 
@@ -228,7 +230,9 @@ namespace geminiService {
         return fallbackImageUrl;
       }
     };
-}
+
+    return { generatePostIdea, generatePostImage };
+})();
 
 // --- Custom Hook ---
 const usePosts = () => {
