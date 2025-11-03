@@ -29,7 +29,7 @@
 </head>
   <body class="bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
     <div id="root"></div>
-    <!-- Change script type to text/babel so Babel can process it, and add data-type="module" to support imports -->
-    <script type="text/babel" data-type="module" src="index.tsx"></script>
+    <!-- Configure Babel to process TSX with React and TypeScript presets -->
+    <script type="text/babel" data-presets="react,typescript" data-type="module" src="index.tsx"></script>
   </body>
 </html>
