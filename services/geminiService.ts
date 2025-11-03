@@ -1,20 +1,32 @@
-
 import { GoogleGenAI } from "@google/genai";
 
-const API_KEY = process.env.API_KEY;
+// Lazily initialize the client to avoid crashing on load if process.env is not available.
+let ai: GoogleGenAI | null = null;
 
-if (!API_KEY) {
-  // This is a fallback for development. The user's environment should provide the key.
-  console.warn("API_KEY is not set. Gemini features will be disabled.");
+function getAiClient(): GoogleGenAI | null {
+    if (ai) {
+        return ai;
+    }
+
+    // Safely check if process and process.env are available in the environment
+    const API_KEY = (typeof process !== 'undefined' && process.env) ? process.env.API_KEY : undefined;
+
+    if (API_KEY) {
+        ai = new GoogleGenAI({ apiKey: API_KEY });
+        return ai;
+    } else {
+        console.warn("API_KEY is not available in this environment. Gemini features will be disabled.");
+        return null;
+    }
 }
 
-const ai = new GoogleGenAI({ apiKey: API_KEY! });
 
 export const generatePostIdea = async (topic: string): Promise<string> => {
-  if (!API_KEY) return "API Key not configured. Please set up your API_KEY.";
+  const aiClient = getAiClient();
+  if (!aiClient) return "API Key not configured. Please set up your API_KEY.";
   
   try {
-    const response = await ai.models.generateContent({
+    const response = await aiClient.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: `Generate a short, engaging travel blog post idea about "${topic}". Make it sound like a personal anecdote or a helpful tip. Focus on a single paragraph.`,
     });
@@ -26,10 +38,14 @@ export const generatePostIdea = async (topic: string): Promise<string> => {
 };
 
 export const generatePostImage = async (prompt: string): Promise<string> => {
-  if (!API_KEY) return "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="; // Transparent pixel
+  const aiClient = getAiClient();
+  // Fallback to a placeholder if the client can't be initialized or an error occurs
+  const fallbackImageUrl = `https://picsum.photos/seed/${prompt.replace(/\s/g, '')}/1200/675`;
+
+  if (!aiClient) return fallbackImageUrl;
   
   try {
-    const response = await ai.models.generateImages({
+    const response = await aiClient.models.generateImages({
         model: 'imagen-4.0-generate-001',
         prompt: `A beautiful, vibrant, high-quality photograph of ${prompt}. Travel photography style, cinematic lighting.`,
         config: {
@@ -46,7 +62,6 @@ export const generatePostImage = async (prompt: string): Promise<string> => {
     throw new Error("No image generated");
   } catch (error) {
     console.error("Error generating image:", error);
-    // Fallback to a placeholder image on error
-    return `https://picsum.photos/seed/${prompt.replace(/\s/g, '')}/1200/675`;
+    return fallbackImageUrl;
   }
 };
