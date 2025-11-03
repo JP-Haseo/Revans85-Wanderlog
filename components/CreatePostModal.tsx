@@ -1,4 +1,16 @@
+/*
+ * NOTE: This file is not currently used.
+ *
+ * This project is running in an environment that uses Babel Standalone
+ * to transpile a single script file (index.tsx) in the browser. It does not
+ * have a bundler (like Vite or Webpack) to resolve imports between files.
+ *
+ * To make the application work, all component, hook, and service logic has
+ * been consolidated into the main `index.tsx` file. This file is a duplicate
+ * of that logic and its content has been commented out to avoid confusion.
+ */
 
+/*
 import React, { useState } from 'react';
 import { Post } from '../types';
 import * as geminiService from '../services/geminiService';
@@ -105,3 +117,4 @@ const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClose, onAd
 };
 
 export default CreatePostModal;
+*/
