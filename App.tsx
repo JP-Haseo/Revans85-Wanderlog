@@ -41,7 +41,9 @@ const App: React.FC = () => {
           <PostView 
             post={selectedPost} 
             onBack={handleBackToList}
-            onAddComment={(postId, content) => addComment(postId, { content })}
+            // FIX: The 'content' parameter is already an object { content: string }.
+            // Pass it directly to addComment instead of wrapping it in another object.
+            onAddComment={(postId, content) => addComment(postId, content)}
           />
         ) : (
           <PostList posts={posts} onSelectPost={handleSelectPost} />
