@@ -1,0 +1,5 @@
+{
+  "name": "Wanderlog",
+  "description": "An anonymous travel blogging platform where users can share their adventures and respond to others. Powered by Gemini for content assistance and image generation.",
+  "requestFramePermissions": []
+}
