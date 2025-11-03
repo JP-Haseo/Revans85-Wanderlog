@@ -24,9 +24,12 @@
   }
 }
 </script>
+  <!-- Add Babel to transpile TSX in the browser -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
   <body class="bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
     <div id="root"></div>
-    <script type="module" src="index.tsx"></script>
+    <!-- Change script type to text/babel so Babel can process it, and add data-type="module" to support imports -->
+    <script type="text/babel" data-type="module" src="index.tsx"></script>
   </body>
 </html>
